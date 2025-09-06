@@ -26,10 +26,10 @@ RUN composer dump-autoload --optimize --no-dev --classmap-authoritative && \
     composer clear-cache
 
 # 安装 RoadRunner
-RUN ./vendor/bin/rr get-binary && art octane:install --server=roadrunner
+RUN ./vendor/bin/rr get-binary && php artisan octane:install --server=roadrunner
 
 # 缓存视图
-RUN art view:cache
+RUN php artisan view:cache
 
 EXPOSE 8000
 
