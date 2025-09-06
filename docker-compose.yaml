@@ -12,6 +12,7 @@ services:
     volumes:
       - .env:/app/.env
       - ./app/Console/Commands/Admin/Create.php:/app/app/Console/Commands/Admin/Create.php
+      - ./config/milvus.php:/app/config/milvus.php
     ports:
       - "28881:8000"
     networks:
