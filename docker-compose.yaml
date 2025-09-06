@@ -1,0 +1,21 @@
+# 在1panel上运行userland
+version: "3.7"
+
+services:
+  app:
+    image: moeworld/moe-userland:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: userland-app
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "8000:28881"
+    networks:
+      - 1panel-network
+
+networks:
+  1panel-network:
+    external: true
