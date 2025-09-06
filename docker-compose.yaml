@@ -9,10 +9,8 @@ services:
       dockerfile: Dockerfile
     container_name: userland-app
     restart: unless-stopped
-    env_file:
-      - .env
     ports:
-      - "8000:28881"
+      - "28881:8000"
     networks:
       - 1panel-network
 
