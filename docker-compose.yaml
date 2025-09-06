@@ -11,6 +11,7 @@ services:
     restart: unless-stopped
     volumes:
       - .env:/app/.env
+      - ./app/Console/Commands/Admin/Create.php:/app/app/Console/Commands/Admin/Create.php
     ports:
       - "28881:8000"
     networks:
