@@ -9,6 +9,8 @@ services:
       dockerfile: Dockerfile
     container_name: userland-app
     restart: unless-stopped
+    volumes:
+      - .:/app
     ports:
       - "28881:8000"
     networks:
