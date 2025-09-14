@@ -25,12 +25,17 @@ class OIDCProvider
     {
         if ($this->discoveryDocument === null) {
             try {
-                $response = Http::timeout(10)->get($this->config['issuer'] . '/.well-known/openid_configuration');
-                
+                $response = Http::timeout(10)->get($this->config['issuer'] . '/.well-known/openid-configuration');
+                // $OIDC_issuer_log=array(
+                //     "OIDC_issuer" => $this->config['issuer'].'/.well-known/openid-configuration',
+                // );
+                // Log::debug("[issuer]",$OIDC_issuer_log);
+
                 if (!$response->successful()) {
                     throw new Exception('Failed to fetch OIDC discovery document');
                 }
 
+                // Log::debug("[response]",array("oidc_response" => $response->body()));
                 $this->discoveryDocument = $response->json();
             } catch (Exception $e) {
                 Log::error('OIDC Discovery Document Error: ' . $e->getMessage());
@@ -46,6 +51,7 @@ class OIDCProvider
             }
         }
 
+        // Log::info('OIDC Discovery Document:', $this->discoveryDocument);
         return $this->discoveryDocument;
     }
 

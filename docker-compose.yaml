@@ -12,6 +12,7 @@ services:
     volumes:
       - .env:/app/.env
       - ./app/Console/Commands/Admin/Create.php:/app/app/Console/Commands/Admin/Create.php
+      - ./storage/logs/laravel.log:/app/storage/logs/laravel.log
       - ./config/milvus.php:/app/config/milvus.php
       - ./database/migrations/2024_06_28_210219_create_oauth_collection.php:/app/database/migrations/2024_06_28_210219_create_oauth_collection.php
       - ./database/migrations/2024_09_03_115305_change_idx_type_on_oauth_faces.php:/app/database/migrations/2024_09_03_115305_change_idx_type_on_oauth_faces.php

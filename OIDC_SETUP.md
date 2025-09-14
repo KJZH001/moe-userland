@@ -15,7 +15,7 @@ OIDC_CLIENT_ID=your_client_id_here
 OIDC_CLIENT_SECRET=your_client_secret_here
 
 # OIDC 回调URL (可选，默认使用 APP_URL + /admin/oidc/callback)
-OIDC_REDIRECT_URI=https://your-domain.com/admin/oidc/callback
+OIDC_REDIRECT_URI=https://userland.moeworld.top/admin/oidc/callback
 
 # OIDC 端点配置 (可选，如果自动发现失败则使用这些配置)
 OIDC_AUTHORIZATION_ENDPOINT=https://auth.moeworld.tech/login/oauth/authorize
