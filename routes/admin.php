@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::withoutMiddleware(['auth:web', 'auth:admin', 'admin.validateReferer'])->group(function () {
     Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::middleware(['throttle:10,1'])->post('/', [AuthController::class, 'login']);
+    Route::get('/oidc/redirect', [AuthController::class, 'redirectToOIDC'])->name('oidc.redirect');
+    Route::get('/oidc/callback', [AuthController::class, 'handleOIDCCallback'])->name('oidc.callback');
 });
 
 Route::get('/home', [AuthController::class, 'index'])->name('index');

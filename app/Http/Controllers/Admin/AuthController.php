@@ -2,16 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Contracts\YubicoOTP;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use Illuminate\Http\JsonResponse;
+use App\Support\Auth\OIDCProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    private OIDCProvider $oidcProvider;
+
+    public function __construct()
+    {
+        $this->oidcProvider = new OIDCProvider();
+    }
+
     public function index(): View|RedirectResponse
     {
         return view('admin.index');
@@ -26,50 +32,62 @@ class AuthController extends Controller
         return view('admin.login');
     }
 
-    public function login(Request $request): JsonResponse
+    /**
+     * 重定向到OIDC授权端点
+     */
+    public function redirectToOIDC(): RedirectResponse
     {
-        $request->validate([
-            'otp' => 'required|max:50',
-        ]);
+        $authorizationUrl = $this->oidcProvider->getAuthorizationUrl();
+        return redirect($authorizationUrl);
+    }
 
-        $otp = app(YubicoOTP::class);
+    /**
+     * 处理OIDC回调
+     */
+    public function handleOIDCCallback(Request $request): RedirectResponse
+    {
+        $code = $request->query('code');
+        $state = $request->query('state');
+        $error = $request->query('error');
 
-        $otp->setOTP($request->input('otp'));
-
-        $device_id = $otp->getDeviceID();
-
-        $admin = (new Admin)->findByDeviceId($device_id);
-        if (! $admin) {
-            // return redirect()->route('admin.login')->with('error', '设备不存在。');
-            return response()->json([
-                'status' => 'error',
-                'error' => '设备不存在',
-                'redirect' => route('admin.login'),
-            ]);
+        if ($error) {
+            return redirect()->route('admin.login')
+                ->with('error', 'OIDC认证失败: ' . ($request->query('error_description') ?? $error));
         }
 
-        if (! $otp->verify()) {
-            // return redirect()->route('admin.login')->with('error', 'OTP 不正确。');
-            return response()->json([
-                'status' => 'error',
-                'error' => 'OTP 不正确',
-                'redirect' => route('admin.login'),
-            ]);
+        if (!$code || !$state) {
+            return redirect()->route('admin.login')
+                ->with('error', 'OIDC认证参数不完整');
         }
 
-        auth('admin')->login($admin, true);
+        try {
+            $admin = $this->oidcProvider->authenticateUser($code, $state);
 
-        // return redirect()->route('admin.index');
-        return response()->json([
-            'status' => 'success',
-            'message' => '登录成功',
-            'redirect' => route('admin.index'),
-        ]);
+            if (!$admin) {
+                return redirect()->route('admin.login')
+                    ->with('error', '用户认证失败或管理员不存在');
+            }
+
+            auth('admin')->login($admin, true);
+
+            return redirect()->route('admin.index')
+                ->with('success', '登录成功');
+
+        } catch (\Exception $e) {
+            \Log::error('OIDC Authentication Error: ' . $e->getMessage());
+            
+            return redirect()->route('admin.login')
+                ->with('error', '认证过程中发生错误，请重试');
+        }
     }
 
     public function logout(): RedirectResponse
     {
         auth('admin')->logout();
+
+        // 可选：重定向到OIDC提供者的登出端点
+        // $logoutUrl = $this->oidcProvider->getLogoutUrl();
+        // return redirect($logoutUrl);
 
         return redirect()->route('admin.login');
     }

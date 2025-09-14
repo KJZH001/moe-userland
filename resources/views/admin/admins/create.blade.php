@@ -19,10 +19,6 @@
             <input type="text" class="form-control" id="email" name="email" placeholder="Email" value="{{ old("email") }}" required>
         </div>
 
-        <div class="form-group mt-1">
-            <label for="otp">OTP</label>
-            <input type="text" class="form-control" id="otp" name="otp" placeholder="OTP" required>
-        </div>
 
         <button type="submit" class="btn btn-primary mt-3">添加</button>
     </form>

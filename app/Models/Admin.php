@@ -2,13 +2,10 @@
 
 namespace App\Models;
 
-use App\Helpers\Auth\HasYubicoOTP;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Admin extends Authenticatable
 {
-    use HasYubicoOTP;
-
     protected $table = 'admins';
 
     protected $fillable = [
@@ -19,4 +16,12 @@ class Admin extends Authenticatable
     protected $hidden = [
         'remember_token',
     ];
+
+    /**
+     * 根据用户名查找管理员
+     */
+    public static function findByUsername(string $username): ?self
+    {
+        return static::where('name', $username)->first();
+    }
 }

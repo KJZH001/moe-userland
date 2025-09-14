@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Contracts\YubicoOTP;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
-use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -30,26 +28,12 @@ class AdminController extends Controller
         $request->validate([
             'email' => 'required|email|unique:admins,email',
             'name' => 'required|string|max:30',
-            'otp' => 'required|string|max:50',
         ]);
 
-        $otp = app(YubicoOTP::class);
-        $otp->setOTP($request->input('otp'));
-        if (! $otp->verify()) {
-            return redirect()->back()->with('error', 'OTP 验证失败。')->withInput();
-        }
-        $device_id = $otp->getDeviceID();
-
-        $admin = (new Admin)->create([
+        $admin = Admin::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
         ]);
-
-        try {
-            $admin->addYubicoOTPDevice($device_id);
-        } catch (Exception $e) {
-            return redirect()->back()->with('error', '添加 YubiKey 失败，原因 '.$e->getMessage())->withInput();
-        }
 
         return redirect()->route('admin.admins.edit', $admin)->with('success', '管理员创建成功。');
     }
