@@ -15,6 +15,14 @@ services:
       - ./config/milvus.php:/app/config/milvus.php
       - ./database/migrations/2024_06_28_210219_create_oauth_collection.php:/app/database/migrations/2024_06_28_210219_create_oauth_collection.php
       - ./database/migrations/2024_09_03_115305_change_idx_type_on_oauth_faces.php:/app/database/migrations/2024_09_03_115305_change_idx_type_on_oauth_faces.php
+      - ./app/Http/Controllers/Admin/AdminController.php:/app/app/Http/Controllers/Admin/AdminController.php
+      - ./app/Http/Controllers/Admin/AuthController.php:/app/app/Http/Controllers/Admin/AuthController.php
+      - ./app/Models/Admin.php:/app/app/Models/Admin.php
+      - ./app/Support/Auth/OIDCProvider.php:/app/app/Support/Auth/OIDCProvider.php
+      - ./config/oidc.php:/app/config/oidc.php
+      - ./resources/views/admin/admins/create.blade.php:/app/resources/views/admin/admins/create.blade.php
+      - ./resources/views/admin/login.blade.php:/app/resources/views/admin/login.blade.php
+      - ./routes/admin.php:/app/routes/admin.php
     ports:
       - "28881:8000"
     networks:
