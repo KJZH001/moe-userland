@@ -5,6 +5,10 @@
  * 运行方式: php test_oidc.php
  */
 
+/*
+
+// 出于安全考虑，如果测试完毕后请删除或注释本文件
+
 require_once 'vendor/autoload.php';
 
 // 加载Laravel环境
@@ -73,3 +77,5 @@ echo "- 请确保在 .env 文件中正确配置了 OIDC 参数\n";
 echo "- 确保 OIDC 提供者可以访问\n";
 echo "- 确保回调 URL 在 OIDC 提供者中正确配置\n";
 echo "- 管理员用户名需要与 OIDC 的 preferred_username 匹配\n";
+
+*/
